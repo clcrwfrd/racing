@@ -1,0 +1,77 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Races</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/races.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>RACES</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Racing Project</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/showRaces">Races</a></li>
+          <li><a href="#">Set Up An Event</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% if error %}
+    <div class="well" style="background-color: ff4444;">
+      <p class=error><strong>Error:</strong> {{ error }}
+    </div>
+  {% endif %}
+      
+  <div class="container">
+    <h3>Races</h3>  
+    <p>This page will contain searching functionality, users should be able to search by bib#, name (first or last), location (city state), race (event name)</p><p></p>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Race</th>
+        <th>Race Type</th>
+        <th>Date</th>
+        <th>Event</th>
+        <th>Description</th>
+      </tr>
+      {% for arace in races %}
+      <tr>
+        <td>{{ arace['id'] }}</td>
+        <td>{{ arace['name'] }}</td>
+        <td>{{ arace['type'] }}</td>
+        <td>{{ arace['date'] }}</td>
+        <td>{{ arace['event'] }}</td>
+        <td>{{ arace['description'] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+    </footer>
+  </div>
+</body>
+ 
+</html>

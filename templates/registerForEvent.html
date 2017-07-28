@@ -1,0 +1,203 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Event Registration Form</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/registerForEvent.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>EVENT REGISTRATION</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/main">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <p></p><p></p>
+
+  <div class="container-fluid">   
+    {% if error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> {{ error }}
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="well" style="background-color: 00C851; color:black; text-align:center;">
+        <p class=error><strong>Success:</strong> {{ success }}
+      </div>
+    {% endif %}
+
+    
+    <div class="col-xs-12" style="text-align: left">
+      <h2>You are here: <a href="/showRegisterForEventSelect">Event Select</a> >> Event Registration for {{ event_name }}</a></h2>
+    </div>
+    
+
+    <p style="font-size:100%; text-align:center" class="text-muted">Required Fields (*)</p>
+
+    <form action="/registerForEvent/{{ event_id }}" method="POST">
+      <div style="text-align:center">
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * First Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="first_name" placeholder="e.g. Cole" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Last Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="last_name" placeholder="e.g. Crawford" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Racing License: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="license" placeholder="e.g. 123456" max="6" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Bib Number: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="bib" placeholder="e.g. 12345" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * RFID Tag: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="rfid_tag" placeholder="e.g. 12345" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Gender: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <select name="gender">
+              <option value="None"> -- select an option -- </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Birthday: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="date" name="birthday" placeholder="mm/dd/yyyy"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Phone Number: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="tel" name="phone" placeholder="e.g. 8161234567" max="10" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Email Address: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="email" name="email" placeholder="e.g. racing@gmail.com" size="25"><br>
+          </div>
+        </div>
+<!--
+        <div class="row">
+          <select multiple style="text-align-last:center;" name="races">
+            <option disabled selected value> -- Select race(s) to sign this person up for -- </option>
+            {% for arace in races %}
+              <option value="{{ arace['id'] }}">{{ arace['name'] }}</option>
+            {% endfor %}
+          </select> 
+        </div>-->
+        <p></p>
+        <div class="well well-sm" style="min-width: 270px; max-width: 40%; margin-left: auto; margin-right: auto;">
+          <p style="text-align:left">Check the races you wish to put this newly registered person in:</p>
+          <div class="row">
+            <div style="text-align:left" class="col-xs-12 col-md-12">
+              {% for race in races %}
+                <input type=checkbox name=races value="{{ race['id'] }}">{{ race['name'] }}<br>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <p></p><p></p>
+        <input type="submit" value="Register for {{ event_name }}" class="btn btn-primary">
+      </div>
+
+    </form>
+  </div>
+  
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

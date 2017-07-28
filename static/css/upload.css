@@ -39,6 +39,23 @@ img {
     justify-content:center;
 }
 
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
 header{
     padding: 6em;
     color: white;
@@ -61,26 +78,4 @@ footer{
 
 h1 {
     letter-spacing: 40px;
-}
-
-.navbar .nav.pull-right {
-     float: right;
-    margin-right: 98px; /*set margin this way in your custom styesheet*/
-}
-
-.thumbnail{
-    background: transparent;
-}
-
-.btn-sub{
-    background-color: #ffffff;
-    border-color: black;
-    color:black;
-    min-width: 40%;
-    max-width: 40%;
-}
-
-.btn-sub:hover {
-    background-color: black; /* Green */
-    color: white;
 }

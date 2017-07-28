@@ -1,0 +1,111 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Race Signup Form</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/registerForRace.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>RACE SIGNUP</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/main">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <p></p><p></p>
+
+  <div class="container-fluid">   
+    {% if error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> {{ error }}
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="well" style="background-color: 00C851; color:black; text-align:center;">
+        <p class=error><strong>Success:</strong> {{ success }}
+      </div>
+    {% endif %}
+
+    
+    <div class="col-xs-12" style="text-align: left">
+      <h2>You are here: <a href="/showRegisterForRaceSelect">Event Select</a> >> <u>Signup for races in {{ event_name }}</u></h2>
+    </div>
+
+    <form action="/registerForRace/{{ event_id }}" method="POST">
+      <div style="text-align:center">
+        <div class="row">
+          <select multiple style="text-align-last:center;" name="races">
+            <option disabled selected value> -- Select race(s) to sign this person up for -- </option>
+            {% for arace in races %}
+              <option value="{{ arace['id'] }}">{{ arace['name'] }}</option>
+            {% endfor %}
+          </select> 
+        </div>
+        <div class="row">
+          <select style="text-align-last:center;" name="person">
+            <option value="None"> -- Select a person who is Registered for {{ event_name }} -- </option>
+            {% for person in registered_people %}
+              <option value="{{ person['id'] }}">{{ person['first_name'] }} {{ person['last_name']}} #{{ person['bib']}}</option>
+            {% endfor %}
+          </select> 
+        </div>
+
+        <p></p><p></p>
+        <input type="submit" value="Signup for these races" class="btn btn-primary">
+      </div>
+
+    </form>
+  </div>
+  
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

@@ -1,0 +1,141 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Upload File</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/upload.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="../static/js/jquery-1.11.2.js"></script>
+  <script src="../static/js/upload.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>UPLOAD</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/main">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% if error %}
+    <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+      <p class=error><strong>Error:</strong> {{ error }}</p>
+    </div>
+  {% endif %}
+
+  {% if success %}
+    <div class="well" style="background-color: 00C851; color:black; text-align:center; margin-bottom: 0px; margin-top: 0px">
+      <p class=error><strong>Success:</strong> {{ success }}</p>
+    </div>
+  {% endif %}
+
+  {% if registered_already %}
+    <div class="alert alert-warning" style="color:black; text-align:center; margin-top: 0px; margin-bottom: 0px;">
+      <p class=error>These people have already been registered for <b><a href="/showRaces/{{ event_id }}" style="color:black">{{ event_name }}</a></b> with their corresponding bib numbers, rfid tag numbers, and license numbers:</p>
+      {% for areg in registered_already %}
+        <p class=error> {{ areg['first_name'] }} {{ areg['last_name'] }} -- {{ areg['bib'] }} -- {{ areg['rfid_tag'] }} -- {{ areg['license'] }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <h3 style="text-align:center;">Upload File</h3><br>
+
+  <div class="container-fluid">   
+    <div class="well">
+      <p style="width: 100%; margin-left: auto; margin-right: auto; text-align: left">Upload a csv file here filled with information about people registering for {{ event_name }}. The format of the file is as follows: "firstname, lastname, bib, rfid_tag, gender, age, race_ids". You may include as many race IDs at the end of each row as you want (this is so you can register one person for many races in the event you have selected). All of the fields are required to be filled out except for race_ids. You may leave races blank if you just want to register this person for the EVENT ({{ event_name }}) and come back later to sign them up for their individual races.</p>
+
+      <p style="width: 100%; margin-left: auto; margin-right: auto; text-align: left"><b>Make sure your birthday columns are in this format or else the upload WILL NOT WORK!</b></p>
+
+
+      <p style="width: 100%; margin-left: auto; margin-right: auto; text-align: left">You can download the formatting template CSV file here:</p>
+      <div style="text-align: left">
+        <a href="/downloadExample" style="color:black;"><button>Download</button></a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-12" style="text-align: center">
+        <form action="/upload/{{ event_id }}" method="POST" enctype="multipart/form-data">
+          <input style="margin-left: auto; margin-right: auto;" type=file name="fileInput" id="fileInput">
+          <input type=submit value=Upload disabled>
+        </form>
+      </div>
+    </div>
+
+    {% if races %}
+      <div class="row">
+        <div class="col-xs-12 col-md-12" style="text-align: center">
+          <div>
+            <p style="width: 50%; margin-left: 25%; text-align: left">A list of races in {{ event_name }}. Use these IDs in the upload file in the slots labeled "Race1, Race2, etc.":</p>
+          </div>
+          <table style="width: 50%; margin-left: 25%; text-align: center; font-size: 90%">
+            <col width="50%">
+            <col width="50%">
+            <tr>
+              <th>Name</th>
+              <th>ID</th>
+            </tr>
+            {% for race in races %}
+              <tr>
+                <td>{{ race['name'] }}</td>
+                <td>{{ race['id'] }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <div class="alert alert-info" style="color:black; text-align: center">
+        <p>There are no races set up for this event so you will not be able to register any people for any races. However, you may still register people for <b><a href="/showRaces/{{ event_id }}" style="color:black">{{ event_name }}</a>!</b></p>
+      </div>
+    {% endif %}
+  </div>
+  
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

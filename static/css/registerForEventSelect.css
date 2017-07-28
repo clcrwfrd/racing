@@ -3,11 +3,6 @@ img {
     max-width: 100%;
 }
 
-.background {
-    height: auto;
-    max-width: 100%;
-}
-
 .navbar {
     margin-bottom: 0px;
     background-color: #white; 
@@ -39,6 +34,23 @@ img {
     justify-content:center;
 }
 
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
 header{
     padding: 6em;
     color: white;
@@ -54,7 +66,7 @@ header{
 footer{
     padding: 1em;
     color: black;
-    background-color:  ;
+    background-color: white;
     clear: left;
     text-align: center;
 }
@@ -63,24 +75,23 @@ h1 {
     letter-spacing: 40px;
 }
 
-.navbar .nav.pull-right {
-     float: right;
-    margin-right: 98px; /*set margin this way in your custom styesheet*/
-}
-
 .thumbnail{
     background: transparent;
 }
 
-.btn-sub{
+.btn-primary{
     background-color: #ffffff;
     border-color: black;
     color:black;
-    min-width: 40%;
-    max-width: 40%;
+    min-width: 100px;
+    max-width: 10%;
 }
 
-.btn-sub:hover {
+.btn-primary:hover {
     background-color: black; /* Green */
     color: white;
+}
+
+h2 {
+    font-size: 100%;
 }

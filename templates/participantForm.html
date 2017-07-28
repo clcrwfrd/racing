@@ -1,0 +1,154 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Participant Form</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/participantForm.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>PARTICIPANT FORM</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/showEvents">Events</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceForm">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForRaceSelect">Manage Events</a></li>
+            </ul>
+          </li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <p></p><p></p>
+
+  <div class="container-fluid">   
+    {% if error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> {{ error }}
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="well" style="background-color: 00C851; color:black; text-align:center;">
+        <p class=error><strong>Success:</strong> {{ success }}
+      </div>
+    {% endif %}
+
+    <p style="font-size:100%; text-align:center" class="text-muted">Required Fields (*)</p>
+
+    <form action="/participantForm" method="POST">
+      <div style="text-align:center">
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * First Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="first_name" placeholder="e.g. Cole" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Last Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="last_name" placeholder="e.g. Crawford" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Bib Number: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="bib" placeholder="e.g. 12345" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * RFID Tag: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="rfid_tag" placeholder="e.g. 12345" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Gender: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <select name="gender">
+              <option disabled selected value> -- select an option -- </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Age: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="number" name="age" min="0" max="100" step="1" value="0" placeholder="e.g. 45"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> * Race: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <select name="race">
+              <option disabled selected value> -- select a race -- </option>
+              {% for arace in races %}
+                <option value="{{ arace['id'] }}">{{ arace['name'] }}</option>
+              {% endfor %}
+            </select> 
+          </div>
+        </div>
+        <p></p><p></p>
+        <input type="submit" value="Add Participant" class="btn btn-primary">
+      </div>
+
+    </form>
+  </div>
+  
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

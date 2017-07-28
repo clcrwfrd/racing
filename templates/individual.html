@@ -1,0 +1,120 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Participants</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../../static/css/participants.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>PARTICIPANTS</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/events">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% if success %}
+    {% if success != "None" %}
+    <div class="well" style="background-color: 00C851; color:black">
+      <p class=error><strong>Success:</strong> {{ success }}
+    </div>
+    {% endif %}
+  {% endif %}
+  {% if error %}
+    <div class="well" style="background-color: ff4444;">
+      <p class=error><strong>Error:</strong> {{ error }}
+    </div>
+  {% endif %}
+      
+  <div class="container">
+    {% if race_name %}
+    <h3>{{ race_name }}</h3> 
+    {% else %}
+    <h3>{{ event_name }}</h3>
+    {% endif %}
+    <h2>You are here: <a href="/showEvents">Events</a> >> <a href="/showRaces/{{ event_id }}">{{ event_name }}</a> >> 
+    {% if race_name %}<a href="/showParticipants/{{ race_id }}">{{ race_name }}</a>{% else %}<a href="/showAllParticipants/{{ event_id }}">All Racers Registered For {{ event_name }}</a>{% endif %} >> <u>{{ individual['name'] }}</u></h2>
+    <p></p>
+    <div class="well well-sm" style="background-color: white; text-align: left;">
+        <li style="list-style-type: none;">
+          <p style="font-size:100%; color:black">
+            {% if race_name %}
+            <a href="/showIndividual/{{ individual['id'] }}/{{ race_id }}">{{ individual['name'] }}</a><br></p>
+            {% else %}
+            <a href="/showAllIndividual/{{ individual['id'] }}/{{ event_id }}"><b>{{ individual['name'] }}</b></a><br></p>
+            {% endif %}
+
+            <p style="font-size:100%; color:black">Participating In These <a href="/showRaces/{{ event_id }}">{{ event_name }}</a> Races:</p>
+            {% for race in races %}
+            <a href="/showParticipants/{{ race['id'] }}">{{ race['name'] }}</a><br>
+            {% endfor %}
+
+            <hr>
+
+            <p style="font-size:100%; color:black">{{ individual['gender'] }}<br>Birthday: {{ individual['birthday'] }}<br>Racing Age: {{ individual['age'] }}</p>
+
+            <p style="font-size:95%; color:gray">Contact Info<br>License: {{ individual['license'] }} | Phone Number: {{ individual['phone'] }} | Email Address: {{ individual['email'] }}<br></p>
+            <!--<p style="font-size:100%; color:black"># Racers Registered for this race: {{ num_participants }}</p>
+            <p style="font-size:100%; color:black">{{ event_date }}<br> {{ event_city }}, {{ event_state }}</p>
+            <p style="font-size:90%; color:gray; word-wrap: break-word;">{{ race_description }}<br></p>-->
+        </li>
+    </div> 
+    
+    <p></p><p></p>
+    {% if race_name %}
+    <a href="/showParticipants/{{ race_id }}"><button style="background-color: white; color:black; border-color: black;" class="btn btn-primary">Back to {{ race_name }}</button></a>
+    {% else %}
+    <a href="/showAllParticipants/{{ event_id }}"><button style="background-color: white; color:black; border-color: black;" class="btn btn-primary">Back to All Registered For {{ event_name }}</button></a>
+    {% endif %}
+
+    <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+    </footer>
+  </div>
+</body>
+ 
+</html>

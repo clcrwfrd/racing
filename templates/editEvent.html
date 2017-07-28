@@ -1,0 +1,194 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Edit Event</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/editEvent.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>EDIT EVENT</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/events">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <p></p><p></p>
+
+  <div class="container-fluid">   
+    {% if error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> {{ error }}
+      </div>
+    {% endif %}
+
+    {% if dup_error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> There is already an Event called <b><a href="/showRaces/{{ event }}" style="color:black">{{ event_name }}</a></b> in {{ event_date }} in {{ event_city }}, {{ event_state }}
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="well" style="background-color: 00C851; color:black; text-align:center;">
+        <p class=error><strong>Success:</strong> {{ success }}
+      </div>
+    {% endif %}
+
+    <h2>You are here: <a href="/showEvents">Events</a> >> <u>Edit {{ event_name }}</u></h2>
+
+    <form action="/editEvent/{{ event_id }}" method="POST" id="edit">
+      <div style="text-align:center">
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Event Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="event_name" value="{{ event_name }}" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> City: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="event_city" value="{{ event_city }}" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> State: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <select name="event_state">
+              <option value="{{ event_state }}"> {{ event_state }} </option>
+              <option value="AL">Alabama</option>
+              <option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option>
+              <option value="AR">Arkansas</option>
+              <option value="CA">California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="DE">Delaware</option>
+              <option value="DC">District Of Columbia</option>
+              <option value="FL">Florida</option>
+              <option value="GA">Georgia</option>
+              <option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option>
+              <option value="IL">Illinois</option>
+              <option value="IN">Indiana</option>
+              <option value="IA">Iowa</option>
+              <option value="KS">Kansas</option>
+              <option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option>
+              <option value="ME">Maine</option>
+              <option value="MD">Maryland</option>
+              <option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option>
+              <option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option>
+              <option value="MO">Missouri</option>
+              <option value="MT">Montana</option>
+              <option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option>
+              <option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option>
+              <option value="NM">New Mexico</option>
+              <option value="NY">New York</option>
+              <option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option>
+              <option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option>
+              <option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option>
+              <option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option>
+              <option value="TX">Texas</option>
+              <option value="UT">Utah</option>
+              <option value="VT">Vermont</option>
+              <option value="VA">Virginia</option>
+              <option value="WA">Washington</option>
+              <option value="WV">West Virginia</option>
+              <option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+            </select> 
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Date of Event: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="date" name="event_date" value="{{ event_date }}"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Description: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <textarea name="event_description" style="text-align: left" form="edit" rows="4" cols="28">{{ event_description }}</textarea>
+          </div>
+        </div>
+        <p></p><p></p>
+        <input type="submit" value="Save Changes" class="btn btn-primary">
+      </div>
+
+    </form>
+  </div>
+
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

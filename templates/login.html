@@ -1,0 +1,72 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Login</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/login.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+ <!--
+<div style="width:100%; height:100%; padding-top: 100px">
+<center><div style="width: 300px; height: 300px; float:center; color: black; background-color: #F5F5F5; padding: 20;> -->
+<body>
+	{% if success %}
+		<div class="well" style="background-color: 00C851; color:black">
+		  <p class=error><strong>Success:</strong> {{ success }}
+		</div>
+	{% endif %}
+
+	<form action="/login/{{ page }}" method="POST">
+		{% if error %}
+			<div class="well" style="background-color: ff4444; color:black">
+			  <p class=error><strong>Error:</strong> {{ error }}
+			</div>
+		{% endif %}
+
+		<div style="width:100%; height:100%; padding-top: 100px">
+		<center>
+			<div class="container">
+				<div style="width: 220px; height: 300px; float:center; color: black; background-color: #F5F5F5; padding: 30;">
+					<div class="login">
+						<div class="login-screen">
+							<div class="app-title">
+								<h1>Login</h1>
+							</div>
+							<div class="login-form">
+								<div class="control-group">
+								<input type="text" class="login-field" value="" placeholder="username" name="username">
+								<label class="login-field-icon fui-user" for="login-name"></label>
+								</div>
+				 
+								<p></p>
+
+								<div class="control-group">
+								<input type="password" class="login-field" value="" placeholder="password" name="password">
+								<label class="login-field-icon fui-lock" for="login-pass"></label>
+								</div>
+
+								<p></p>
+				 
+				                <input style="text-align: center;" type="submit" value="Login" class="btn btn-primary btn-large btn-block" >
+							    <br>
+							</div>
+							<div class="register">
+								<li style="list-style-type: none;" role="presentation" class="active"><a href="/"><u>Back to site as a user</u></a></li>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</center>
+		</div>
+	</form>
+	<footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  	</footer>
+</body>
+ 
+</html>

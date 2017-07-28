@@ -1,0 +1,139 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Edit Race</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/editEvent.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body> 
+  <header class="header">
+    <h1>EDIT RACE</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/events">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <p></p><p></p>
+
+  <div class="container-fluid">   
+    {% if error %}
+      {% if error != "None" %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> {{ error }}
+      </div>
+      {% endif %}
+    {% endif %}
+
+    {% if dup_error %}
+      <div class="well" style="background-color: ff4444; color:black; text-align:center;">
+        <p class=error><strong>Error:</strong> There is already an Event called <b><a href="/showRaces/{{ event }}" style="color:black">{{ event_name }}</a></b> in {{ event_date }} in {{ event_city }}, {{ event_state }}
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="well" style="background-color: 00C851; color:black; text-align:center;">
+        <p class=error><strong>Success:</strong> {{ success }}
+      </div>
+    {% endif %}
+
+    <h2>You are here: <a href="/showEvents">Events</a> >> <a href="/showRaces/{{ race_event }}"> {{ event_name }}</a> >> Edit {{ race_name }}</h2>
+
+    <form action="/editRace/{{ race_id }}" method="POST" id="edit">
+      <div style="text-align:center">
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Race Name: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="race_name" value="{{ race_name }}" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Type: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <select name="race_type">
+              <option value="{{ race_type }}">{{ race_type }}</option>
+              <option value="Running">Running</option>
+              <option value="Swimming">Swimming</option>
+              <option value="Biking">Biking</option>
+            </select> 
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Start Time: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <input type="text" name="race_start_time" value="{{ race_start_time }}" size="25"><br>
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="text-align:right" class="col-xs-6 col-md-6">
+            <p> Description: </p>
+          </div>
+          <div style="text-align:left" class="col-xs-6 col-md-6">
+            <textarea name="race_description" style="text-align: left" form="edit" rows="4" cols="28">{{ race_description }}</textarea>
+          </div>
+        </div>
+        <p></p><p></p>
+        <input type="submit" value="Save Changes" class="btn btn-primary">
+      </div>
+
+    </form>
+  </div>
+
+  <footer class="footer">
+      <p>&copy; Cole Crawford</p>
+  </footer>
+</body>
+ 
+</html>

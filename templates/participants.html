@@ -2,17 +2,17 @@
 <html lang="en">
  
 <head>
-  <title>Races</title>
+  <title>Participants</title>
 
   <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
-  <link href="../static/css/races.css" rel="stylesheet">
+  <link href="../static/css/participants.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
  
 <body> 
   <header class="header">
-    <h1>RACES</h1>
+    <h1>PARTICIPANTS</h1>
   </header>
 
   <nav class="navbar navbar-inverse">
@@ -73,27 +73,40 @@
   {% endif %}
       
   <div class="container">
-    <h3>{{ eventname }}</h3>  
-    <h2>You are here: <a href="/showEvents">Events</a> >> <u>{{ eventname }}</u></h2>
+    {% if race_name %}
+    <h3>{{ race_name }}</h3> 
+    {% else %}
+    <h3>{{ event_name }}</h3>
+    {% endif %}
+
+    <h2>You are here: <a href="/showEvents">Events</a> >> <a href="/showRaces/{{ event }}"> {{ event_name }}</a> >> 
+    {% if race_name %}<u>{{ race_name }}</u>{% else %}<u>All Racers Registered For {{ event_name }}</u>{% endif %}</h2>
     <p></p>
+    {% if race_name %}
     <div class="well well-sm" style="background-color: white; text-align: left;">
         <li style="list-style-type: none;">
           <p style="font-size:100%; color:black">
-            <a href="/showRaces/{{ event_id }}"><b>{{ eventname }}</b></a><br></p>
-            <p style="font-size:100%; color:black"># Racers Registered for this event: {% if registered_racers > 0 %}<a href="/showAllParticipants/{{ event_id }}">{% endif %}{{ registered_racers }}</a></p>
+            <a href="/showRaces/{{ event_id }}"><b>{{ race_name }}</b></a><br></p>
+            <p style="font-size:100%; color:black"># Racers Registered for this race: {{ num_participants }}</p>
             <p style="font-size:100%; color:black">{{ event_date }}<br> {{ event_city }}, {{ event_state }}</p>
-            <p style="font-size:90%; color:gray; word-wrap: break-word;">{{ event_description }}<br></p>
+            <p style="font-size:90%; color:gray; word-wrap: break-word;">{{ race_description }}<br></p>
         </li>
-    </div>
-    {% if noResults %}
-    {% else %}
-    <p>Search for races in {{ eventname }}:</p>
+    </div> 
+    <p></p>
+    {% endif %}
+    <!--
+    {% if num_participants > 0 %}
+      {% if allParticipants %}
+      <p>Search for people in {{ event_name }}:</p>
+      {% else %}
+      <p>Search for people in {{ race_name }}:</p>
+      {% endif %}
     <p></p><p></p> 
 
     <div class="row">
       <div style="text-align:center" class="col-xs-12 col-md-12">
         <div class="row">
-          <form action="/searchRaces/{{ event_id }}" method="POST">
+          <form action="/searchEvents" method="POST">
             <div style="text-align:right" class="col-xs-6 col-md-6">
               <input type="text" name="search_string" id="search_string" class="form-control" placeholder="Search">
             </div>
@@ -105,7 +118,9 @@
       </div>
     </div>
     <p></p><p></p> 
-    {% endif %}
+    {% endif %}-->
+
+    <p></p><p></p> 
 
     {% if noResults %}
       <p>No Races for this event yet!</p>
@@ -117,35 +132,67 @@
           <col width="auto">
           <col width="auto">
           <col width="auto">
+          {% if race_name %}
+          <col width="auto">
+          <col width="auto">
+          <col width="auto">
+          {% endif %}
           <col width="165">
-          <th>ID</th>
-          <th>Race Name</th>
-          <th>Date</th>
-          <th>Race Type</th>
-          <th>Description</th>
+          <th>Name</th>
+          <th>Bib</th>
+          <th>RFID Tag</th>
+          <th>Gender</th>
+          <th>Racing Age</th>
+          {% if race_name %}
+          <th>Race</th>
+          <th>Total Time</th>
+          <th>Place</th>
+          {% endif %}
           {% if session['logged_in'] == True %}
           <th>Options</th>
           {% endif %}
         </tr>
-        {% for arace in races %}
+        {% for aparticipant in participants %}
         <tr>
-          <td>{{ arace['id'] }}</td>
-          <td><a href="/showParticipants/{{ arace['id'] }}">{{ arace['name'] }}</a></td>
-          <td>{{ arace['date'] }}</td>
-          <td>{{ arace['type'] }}</td>
-          <td>{{ arace['description'] }}</td>
+          {% if allParticipants %}
+          <td><a href="/showAllIndividual/{{ aparticipant['id'] }}/{{ event }}">{{ aparticipant['first_name'] }} {{ aparticipant['last_name'] }}</a></td>
+          {% else %}
+          <td><a href="/showIndividual/{{ aparticipant['id'] }}/{{ aparticipant['race_id'] }}">{{ aparticipant['first_name'] }} {{ aparticipant['last_name'] }}</a></td>
+          {% endif %}
+          <td>{{ aparticipant['bib'] }}</td>
+          <td>{{ aparticipant['rfid_tag'] }}</td>
+          <td>{{ aparticipant['gender'] }}</td>
+          <td>{{ aparticipant['age'] }}</td>
+          {% if race_name %}
+          <td>{{ aparticipant['race'] }}</td>
+          <td>{{ aparticipant['total_time'] }}</td>
+          <td>{{ aparticipant['place'] }}</td>
+          {% endif %}
           {% if session['logged_in'] == True %}
           <td>
-            <a href="/showEditRace/{{ arace['id'] }}">
+            {% if allParticipants %}
+            <a href="/showEditRegistered/{{ aparticipant['id'] }}">
               <button style="width:69px; text-align: center; background-color: white; color:black;; border-color: black" class="btn btn-sm">Edit  
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
               </button> 
             </a>
-            <a href="/deleteRace/{{ arace['id'] }}">
-              <button onclick="return confirm('Are you sure you want to delete {{ arace['name'] }}?');" style="width:69px; text-align: center; background-color: black; color:white; border-color: black" class="btn btn-sm">Delete  
+            <a href="/deleteRegistered/{{ aparticipant['id'] }}">
+              <button onclick="return confirm('Are you sure you want to delete {{ aparticipant['name'] }}?');" style="width:69px; text-align: center; background-color: black; color:white; border-color: black" class="btn btn-sm">Delete  
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
               </button> 
             </a>
+            {% else %}
+            <a href="/showEditRaceParticipant/{{ aparticipant['race_id'] }}/{{ aparticipant['id'] }}">
+              <button style="width:69px; text-align: center; background-color: white; color:black;; border-color: black" class="btn btn-sm">Edit  
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+              </button> 
+            </a>
+            <a href="/deleteRaceParticipant/{{ aparticipant['race_id'] }}/{{ aparticipant['id'] }}">
+              <button onclick="return confirm('Are you sure you want to delete {{ aparticipant['name'] }}?');" style="width:69px; text-align: center; background-color: black; color:white; border-color: black" class="btn btn-sm">Delete  
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button> 
+            </a>
+            {% endif %}
           </td>
           {% endif %}
         </tr>
@@ -154,28 +201,7 @@
     {% endif %}
 
     <p></p><p></p>
-    <div class="row">
-      {% if races %}
-      <div class="col-xs-6 col-md-6">
-        <a href="/showEvents"><button style="background-color: white; color:black; border-color: black;" class="btn btn-primary">Back to Events</button></a>
-      </div>
-        {% if participants=="true" %}
-          <div class="col-xs-6 col-md-6" style="text-align:right">
-            <a href="/showAllParticipants/{{ event_id }}"><button style="background-color: white; color:black; border-color: black" class="btn btn-primary">All Registered Racers</button></a>
-          </div>
-        {% endif %}
-      {% else %}
-        {% if participants=="true" %}
-        <div>
-          <a href="/showAllParticipants/{{ event_id }}"><button style="background-color: white; color:black; border-color: black" class="btn btn-primary">All Registered Racers</button></a>
-        </div>
-        {% endif %}
-      <p></p>
-      <div>
-        <a href="/showEvents"><button style="background-color: white; color:black; border-color: black;" class="btn btn-primary">Back to Events</button></a>
-      </div>
-      {% endif %}
-    </div>
+    <a href="/showRaces/{{ event }}"><button style="background-color: white; color:black; border-color: black;" class="btn btn-primary">Back to {{ event_name }}</button></a>
 
     <footer class="footer">
       <p>&copy; Cole Crawford</p>

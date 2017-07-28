@@ -1,0 +1,145 @@
+<CTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>Search Events</title>
+
+  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../static/css/searchEvents.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="../static/js/jquery-1.11.2.js"></script>
+  <script src="../static/js/searchEvents.js"></script>
+</head>
+ 
+<body style="background-color: #f2f2f2"> 
+  <header class="header">
+    <h1>EVENTS</h1>
+  </header>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">Zonderdag</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/showEvents">Events</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          {% if session['logged_in'] == True %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/showEventForm">Create Event</a></li>
+              <li><a href="/showRaceFormSelect">Create Race</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showRegisterForEventSelect">Event Registration</a></li>
+              <li><a href="/showRegisterForRaceSelect">Race Registration</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/showUploadSelect">Upload File</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if session['logged_in'] == True %}
+            <li class="login" style="float: none;"><a href="/logout">Logout <span class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="login" style="float: none;"><a href="/showLogin/main">Login <span class="sr-only">(current)</span></a></li>
+            {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% if error %}
+    <div class="well" style="background-color: ff4444;">
+      <p class=error><strong>Error:</strong> {{ error }}
+    </div>
+  {% endif %}
+      
+  <div class="container">
+    <h3>Search Events</h3>  
+
+    <h2>You are here: <a href="/showEvents">Events</a> >> <a href="/showRaces/{{ event_id }}">{{ event_name }}</a> >> <u>Search Races</u></h2>
+    <p></p>
+
+    <p>Search all events here:</p><p></p>
+
+    <div class="row">
+      <div style="text-align:center" class="col-xs-12 col-md-12">
+        <div class="row">
+          <form action="/searchRaces/{{ event_id }}" method="POST">
+            <div style="text-align:right" class="col-xs-6 col-md-6">
+              <input type="text" name="search_string" id="search_string" class="form-control" placeholder="Search">
+            </div>
+            <div style="text-align:left" class="col-xs-6 col-md-6">
+              <input type="submit" value="Search" class="btn btn-primary">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <p></p><p></p> 
+    <p style="font-size:160%;">Search Results for "{{ search_string }}":</p>
+
+    <ul id="numbers">
+      {% for race in search_results %}
+        <div class="well well-sm" style="background-color: white; text-align: left; width: 41%; min-width: 270px; margin-bottom:0%;">
+            <li style="list-style-type: none;">
+              <div class="row">
+                <div class="col-xs-12 col-md-12">
+                  <p><span class="glyphicon glyphicon-flag"></span></p>
+                  <p style="font-size:100%; color:black"><a href="/showParticipants/{{ race['id'] }}"><b>{{ race['name'] }}</b></a><br></p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-12 col-md-12">
+                  <a href="/showEditRace/{{ race['id'] }}">
+                    <button style="width:69px; text-align: left; margin-left: auto; background-color: white; color:black;; border-color: black" class="btn btn-sm">Edit  
+                      <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button> 
+                  </a>
+                  <a href="/deleteRace/{{ race['id'] }}">
+                    <button onclick="return confirm('Are you sure you want to delete {{ race['name'] }}?');" style="width:69px; text-align: left;margin-left: auto; background-color: black; color:white; border-color: black" class="btn btn-sm">Delete  
+                      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button> 
+                  </a>
+                </div>
+              </div>
+
+              <hr>
+
+              <p></p>
+
+              <div class="row">
+                <div class="col-xs-8 col-md-8">
+                  <p style="font-size:90%; color:black"># Participants: {{ race['participant_count'] }}</p>
+                </div>
+
+                <div class="col-xs-4 col-md-4">
+                  
+                </div>
+              </div>
+              <p style="font-size:90%; color:gray">{{ race['date'] }}<br> {{ race['city'] }}, {{ race['state'] }}</p>
+
+            </li>
+        </div>
+      {% endfor %}
+    </ul>
+
+    <footer class="footer" style="background-color: #f2f2f2">
+      <p>&copy; Cole Crawford</p>
+    </footer>
+  </div>
+</body>
+ 
+</html>

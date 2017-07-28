@@ -1,0 +1,27 @@
+.btn-primary{
+    background-color: #ffffff;
+    border-color: black;
+    color:black;
+    min-width: 130px;
+    max-width: 40%;
+}
+
+.btn-primary:hover {
+    background-color: black; /* Green */
+    color: white;
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+footer{
+    padding: 1em;
+    color: black;
+    background-color: white;
+    clear: left;
+    text-align: center;
+}

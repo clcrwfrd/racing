@@ -4,7 +4,7 @@
 <head>
   <title>Participants</title>
 
-  <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../static/css/participants.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -79,6 +79,24 @@
     <h2>You are here: <a href="/showEvents">Events</a> >> <a href="/showRaces/{{ event_id }}">{{ event_name }}</a> >> 
     {% if race_name %}<a href="/showParticipants/{{ race_id }}">{{ race_name }}</a>{% else %}<a href="/showAllParticipants/{{ event_id }}">All Racers Registered For {{ event_name }}</a>{% endif %} >> <u>{{ individual['name'] }}</u></h2>
     <p></p>
+    <hr>
+    <table>
+      <tr>
+        <th>Place</th>
+        <th>Finish Time</th>
+        {% for lap_num in individual['lap_nums'] %}
+        <th>Lap #{{ lap_num }}</th>
+        {% endfor %}
+      </tr>
+      <tr>
+        <td>{{ individual['place'] }}</td>
+        <td>{{ individual['finish_time'] }}</td>
+        {% for lap in individual['laps'] %}
+        <td>{{ lap }}</td>
+        {% endfor %}
+      </tr>
+    </table>
+    <br>
     <div class="well well-sm" style="background-color: white; text-align: left;">
         <li style="list-style-type: none;">
           <p style="font-size:100%; color:black">

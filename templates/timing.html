@@ -2,17 +2,19 @@
 <html lang="en">
  
 <head>
-  <title>Event Select</title>
+  <title>Timing</title>
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../static/css/registerForEventSelect.css" rel="stylesheet">
+  <link href="../static/css/timing.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../static/js/jquery-1.11.2.js"></script>
+    <script src="../static/js/timing.js"></script>
 </head>
  
 <body> 
   <header class="header">
-    <h1>EVENT SELECT</h1>
+    <h1>TIMING</h1>
   </header>
 
   <nav class="navbar navbar-inverse">
@@ -72,31 +74,51 @@
       </div>
     {% endif %}
 
+    
     <div class="col-xs-12" style="text-align: left">
-      <h2>You are here: <u><a href="/showRegisterForEventSelect">Event Select</a></u></h2>
+      <h2>You are here: <a href="/showTimingSelect">Event Select</a> >> Timing for {{ event_name }}</a></h2>
     </div>
 
-    <form action="/showRegisterForEvent" method="POST">
-      <div style="text-align:center">
-        <div class="row">
-          <div style="text-align:center" class="col-xs-12 col-md-12">
-            <p> Select the event you want to register for: </p>
-          </div>
-          <div style="text-align:center" class="col-xs-12 col-md-12">
-            <select style="text-align-last:center;" name="event">
-              <option value="None"> -- select an event (event name / city, state / date) -- </option>
-              {% for anEvent in events %}
-                <option value="{{ anEvent['id'] }}">{{ anEvent['name'] }} / {{ anEvent['city'] }}, {{ anEvent['state'] }} / {{ anEvent['date'] }}</option>
-              {% endfor %}
-            </select> 
+    <br><br><br><br>
+    <div class="row">
+      {% for race in races %}
+        <div class="col-xs-12 col-sm-12 col-md-12">
+          <div class="well well-sm" style="background-color: white; text-align: center;">
+            <li style="list-style-type: none;">
+              <div class="row">
+                <div class="col-xs-12 col-md-12" style="text-align: left;">
+                  <p style="font-size:100%; color:black"><span class="glyphicon glyphicon-flag"></span> | {{ race['name'] }}</a>{% if race['start_time'] %} | {{ race['start_date'] }} {% endif %}</p>
+                </div>
+              </div>
+              <hr>
+              {% if race['start_time'] %} 
+              <p style="text-align: left;">Start Time: {{ race['start_time'] }} on {{ race['start_date'] }}</p> 
+              {% else %}
+              <p style="text-align: left;">No start time for this race</p>
+              {% endif %}
+              {% if race['end_time'] %} 
+              <p style="text-align: left;">End Time: {{ race['end_time'] }} on {{ race['end_date'] }}</p>
+              {% else %}
+              <p style="text-align: left;">No end time for this race</p> 
+              {% endif %}
+              {% if race['total_time'] %} 
+              <p style="text-align: left;">Total Time: {{ race['total_time'] }}</p>
+              {% endif %}
+              <hr>
+              <div class="row">
+                <div class="col-xs-12" style="text-align: left">
+                  <button id="start" class="btn btn-primary-start" onclick="start('{{ race['id'] }}')">Start</button>
+                  <button id="stop" class="btn btn-primary-stop" onclick="stop('{{ race['id'] }}')">Stop</button>
+                </div>
+              </div>
+              <p></p>
+            </li>
           </div>
         </div>
-        <p></p><p></p>
-        <input type="submit" value="Continue" class="btn btn-primary">
-      </div>
-
-    </form>
+      {% endfor %}
+    </div>
   </div>
+
   
   <footer class="footer">
       <p>&copy; Cole Crawford</p>

@@ -289,7 +289,7 @@ def showRegisterForEvent():
         cursor.execute(my_query)
         races = []
 
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_info={"id": id, "name": name}
             races.append(race_info)
 
@@ -325,7 +325,7 @@ def registerForEvent(event_id=None):
         cursor.execute(my_query)
         races = []
 
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_info={"id": id, "name": name}
             races.append(race_info)
 
@@ -360,7 +360,7 @@ def registerForEvent(event_id=None):
         if (first_name=="" or last_name=="" or bib=="" or rfid_tag=="" or gender=="None" or age=="0" or license=="" or phone=="" or email==""):
             error = 'ALL of the required fields must be filled out!'
             return render_template('registerForEvent.html', error=error, registered_people=registered_people, event_id=event_id, event_name=event_name, races=races)
-        
+        print("all fields filled out")
         #if someone is already registered with input bib number in this event
         my_query=("SELECT COUNT(*), Registered.first_name, Registered.last_name FROM Registered, Event WHERE Registered.event=Event.id AND Registered.bib="
         +bib+" AND Event.id="+event_id)
@@ -369,15 +369,16 @@ def registerForEvent(event_id=None):
         if data[0] > 0:
             error=data[1]+" "+data[2]+" is already registered with Bib #"+bib+ " in "+event_name
             return render_template('registerForEvent.html', error=error, registered_people=registered_people, event_id=event_id, event_name=event_name, races=races)
-        
+        print("no one with bib")
         #if someone is already registered with input rfid tag in this event
-        my_query="SELECT COUNT(*), Registered.first_name, Registered.last_name FROM Registered, Event WHERE Registered.event=Event.id AND Registered.rfid_tag="+rfid_tag+" AND Event.id="+event_id
+        my_query="SELECT COUNT(*), Registered.first_name, Registered.last_name FROM Registered, Event WHERE Registered.event=Event.id AND Registered.rfid_tag='"+rfid_tag+"' AND Event.id="+event_id
+        print(my_query)
         cursor.execute(my_query)
         data=cursor.fetchone()
         if data[0] > 0:
             error=data[1]+" "+data[2]+" is already registered with RFID Tag "+rfid_tag+ " in "+event_name
             return render_template('registerForEvent.html', error=error, registered_people=registered_people, event_id=event_id, event_name=event_name, races=races)
-        
+        print("no one with rfid tag")
         #if someone is already registered with input LICENSE in this event
         my_query="SELECT COUNT(*), Registered.first_name, Registered.last_name FROM Registered, Event WHERE Registered.event=Event.id AND Registered.license="+license+" AND Event.id="+event_id
         cursor.execute(my_query)
@@ -394,6 +395,7 @@ def registerForEvent(event_id=None):
         reg_for_races=" and was signed up for these races: "
         
         for race_id in race_ids:
+            print("for loops race_ids")
             my_query="SELECT id FROM Registered WHERE bib='"+str(bib)+"' AND rfid_tag='"+str(rfid_tag)+"' AND event='"+str(event_id)+"'"
             cursor.execute(my_query)
             registration_id=cursor.fetchone()[0]
@@ -595,22 +597,24 @@ def raceForm(race_event=None):
             event_info = {"id": id, "name": event_name}
             events.append(event_info)
 
-        race_name = request.form['race_name']
-        race_type = request.form['race_type']
-        race_description = request.form['race_description']
-        print("got everything")
-
-        if (race_name == "" or race_type == "None" or race_event == "None"):
-            error = 'ALL of the required fields must be filled out!'
-            return render_template('raceForm.html', error=error, events=events)
-
-        if race_description == "":
-            race_description = 'None'
-
         my_query="SELECT name FROM Event WHERE id="+race_event
         cursor.execute(my_query)
         event_name=cursor.fetchone()[0]
         print(event_name)
+        event_id=race_event
+
+        race_name = request.form['race_name']
+        race_type = request.form['race_type']
+        num_laps = request.form['num_laps']
+        race_description = request.form['race_description']
+        print("got everything")
+
+        if (race_name == "" or race_type == "None" or num_laps == "" or race_event == "None"):
+            error = 'ALL of the required fields must be filled out!'
+            return render_template('raceForm.html', error=error, event_id=event_id, event_name=event_name)
+
+        if race_description == "":
+            race_description = 'None'
 
         my_query="SELECT id FROM Race WHERE Race.name='"+race_name+"' AND Race.event="+race_event
         cursor.execute(my_query)
@@ -620,7 +624,7 @@ def raceForm(race_event=None):
             dup_error="True"
             return render_template('raceForm.html', dup_error=dup_error, events=events, event_name=event_name, race_name=race_name, race=race_id, event_id=race_event)
 
-        my_query = ("INSERT INTO Race (name, type, event, description) VALUES ('"+race_name+"','"+race_type+"','"+
+        my_query = ("INSERT INTO Race (name, type, num_laps, event, description) VALUES ('"+race_name+"','"+race_type+"','"+num_laps+"','"+
             race_event+"','"+race_description+"')")
 
         print(my_query)
@@ -689,7 +693,7 @@ def showRaces(race_event=None):
                 event_date=event_date, event_city=event_city, event_state=event_state, event_description=event_description,
                 registered_racers=registered_racers, success=success, error=error)
 
-        for (id, race_name, type, start_time, event, description) in cursor:
+        for (id, race_name, type, start_time, end_time, num_laps, event, description) in cursor:
             '''my_query2 = "SELECT name, date FROM Event WHERE id="+str(event)
             cursor2.execute(my_query2)
             data = cursor2.fetchone()
@@ -770,7 +774,7 @@ def showRegisterForRace():
         cursor.execute(my_query)
         races = []
 
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_info={"id": id, "name": name}
             races.append(race_info)
 
@@ -809,7 +813,7 @@ def registerForRace(event_id=None):
         cursor.execute(my_query)
         races = []
 
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_info={"id": id, "name": name}
             races.append(race_info)
 
@@ -923,7 +927,7 @@ def showEditRace(race_id=None):
 
         my_query = "SELECT * FROM Race WHERE id="+str(race_id)
         cursor.execute(my_query)
-        for (id, name, type, start_time, event, description) in cursor:
+        for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_id=id
             race_name=name
             race_type=type
@@ -966,7 +970,7 @@ def editRace(race_id=None):
 
         my_query = "SELECT * FROM Race WHERE id="+str(race_id)
         cursor.execute(my_query)
-        for (id, name, type, start_time, event, description) in cursor:
+        for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             print(event)
             event_id=event
             my_query="SELECT * FROM Race WHERE name='"+race_name+"' AND event="+str(event)
@@ -1004,7 +1008,7 @@ def showParticipantForm():
         cursor.execute(my_query)
         races = []
 
-        for (id, name, type, start_time, event, description) in cursor:
+        for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_info = {"id": id, "name": name}
             races.append(race_info)
 
@@ -1020,6 +1024,7 @@ def showParticipants(participant_race=None):
     try:
         conn = mysql.get_db()
         cursor = conn.cursor()
+        cursor2 = conn.cursor()
 
         if 'success' in request.args:
             success = request.args['success']
@@ -1045,9 +1050,57 @@ def showParticipants(participant_race=None):
             r_name=race_name
             r_description=race_description
 
+        ################### FINISH TIMES AND PLACES #####################
+
         my_query = ("SELECT Registered.*, Race.name, Race.id FROM Registered, Participant, Race WHERE Participant.race="+participant_race+
         " AND Participant.race=Race.id AND Registered.id=Participant.registration_id ORDER BY Registered.last_name, Registered.first_name, Race.name")
-        print(my_query)
+        
+        cursor.execute(my_query)
+        if cursor.rowcount == 0:
+            print("no res")
+            return render_template('participants.html', noResults="true", event=e_id, event_name=e_name, event_city=e_city, event_state=e_state,
+            event_date=e_date, race_id=r_id, race_name=r_name, race_description=r_description, num_participants=cursor.rowcount, success=success,
+            error=error)
+        else:
+            num_participants=cursor.rowcount
+
+        for (id, first_name, last_name, bib, rfid_tag, event, gender, age, license, phone, email, birthday, race_name, race_id) in cursor:
+            ##### Now im gonna do the lap times and placing #####
+            # GET FINISH TIME FOR THIS PERSON
+            my_query=("SELECT DISTINCT Lap.time_stamp, Race.num_laps, Race.start_time FROM racing.Lap, racing.Registered, racing.Race WHERE Lap.time_stamp  BETWEEN Race.start_time "+
+            "AND Race.end_time AND Lap.event_id=Race.event  AND Lap.rfid_tag=Registered.rfid_tag AND Registered.rfid_tag='"+rfid_tag+"' AND Race.id="+participant_race+
+            " AND Lap.time_stamp>DATE_ADD(Race.start_time, INTERVAL 30 SECOND) ORDER BY time_stamp DESC")
+            cursor2.execute(my_query)
+            if cursor2.rowcount>0:
+                data=cursor2.fetchone()
+                finish_time=data[0]
+                num_laps=data[1]
+                start_time=data[2]
+
+                finish_time=str(finish_time-start_time)
+
+
+                #PUT THE FINAL TIME IN PARTICIPANT TABLE
+                if(cursor2.rowcount>=num_laps):
+                    my_query="UPDATE Participant SET finish_time='"+str(finish_time)+"' WHERE race="+str(participant_race)+" AND registration_id="+str(id)
+                    cursor2.execute(my_query)   
+                    conn.commit()
+
+        # GET ALL FINAL LAPS
+        my_query="SELECT * FROM Participant WHERE race="+str(participant_race)+" ORDER BY finish_time"
+        cursor.execute(my_query)
+        i=1
+        for(id, race, registration_id, finish_time, place) in cursor:
+            if finish_time != None:
+                my_query="UPDATE Participant SET place='"+str(i)+"' WHERE id="+str(id)
+                cursor2.execute(my_query)   
+                conn.commit()
+                i+=1
+
+        ########### NOW STORE EVERYTHING #############
+
+        my_query = ("SELECT Registered.*, Race.name, Race.id, Participant.finish_time, Participant.place FROM Registered, Participant, Race WHERE Participant.race="+participant_race+
+        " AND Participant.race=Race.id AND Registered.id=Participant.registration_id ORDER BY Registered.last_name, Registered.first_name, Race.name")
         participants = []
 
         cursor.execute(my_query)
@@ -1061,18 +1114,15 @@ def showParticipants(participant_race=None):
 
         print("made it")
 
-        for (id, first_name, last_name, bib, rfid_tag, event, gender, age, license, phone, email, birthday, race_name, race_id) in cursor:
-            print(first_name)
-            print(last_name)
-            print(bib)
-            print(rfid_tag)
-            print(event)
-            print(gender)
-            print(age)
-            print(race_name)
+        for (id, first_name, last_name, bib, rfid_tag, event, gender, age, license, phone, email, birthday, race_name, race_id, finish_time, place) in cursor:
+            if finish_time==None:
+                finish_time="n/a"
+            if place==None:
+                place="n/a"
 
             participant_info = {"id": id, "name": first_name+" "+last_name, "first_name": first_name, "last_name": last_name, "bib": bib, "rfid_tag": rfid_tag, 
-            "gender": gender, "age": age, "license": license, "phone": phone, "email": email, "birthday": birthday, "race": race_name, "race_id": race_id}
+            "gender": gender, "age": age, "license": license, "phone": phone, "email": email, "birthday": birthday, "race": race_name, "race_id": race_id,
+            "finish_time": finish_time, "place": place}
             
             participants.append(participant_info)
 
@@ -1175,7 +1225,7 @@ def showEditRaceParticipant(participant_race=None, participant_id=None):
 
         my_query="SELECT * FROM Race WHERE id="+str(participant_race)
         cursor.execute(my_query)
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             participant_stuff['race_id']=id
             participant_stuff['race_name']=name
             participant_stuff['event_id']=event
@@ -1382,6 +1432,7 @@ def showIndividual(participant_id=None, participant_race=None):
     try:
         conn = mysql.get_db()
         cursor = conn.cursor()
+        cursor2 = conn.cursor()
 
         if 'success' in request.args:
             success = request.args['success']
@@ -1392,7 +1443,7 @@ def showIndividual(participant_id=None, participant_race=None):
         my_query=("SELECT Event.name, Race.* FROM Event, Race, Participant WHERE Event.id=Race.event AND Participant.race=Race.id "+
         "AND Participant.registration_id="+str(participant_id))
         cursor.execute(my_query)
-        for(event_name1, id, name, type, start_time, event, description) in cursor:
+        for(event_name1, id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             event_name=event_name1
             print(name)
             print(id)
@@ -1401,7 +1452,7 @@ def showIndividual(participant_id=None, participant_race=None):
 
         my_query="SELECT * FROM Race WHERE Race.id="+str(participant_race)
         cursor.execute(my_query)
-        for(id, name, type, start_time, event, description) in cursor:
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             race_name=name
             race_id=id
             event_id=event
@@ -1416,11 +1467,41 @@ def showIndividual(participant_id=None, participant_race=None):
             num_participants=cursor.rowcount
 
         print("made it")
-
+        laps = []
+        lap_nums = []
         for (id, first_name, last_name, bib, rfid_tag, event, gender, age, license, phone, email, birthday) in cursor:
+            print("inside again")
+            my_query=("SELECT DISTINCT Lap.time_stamp, Race.num_laps, Race.start_time FROM racing.Lap, racing.Registered, racing.Race WHERE Lap.time_stamp  BETWEEN Race.start_time "+
+            "AND Race.end_time AND Lap.event_id=Race.event  AND Lap.rfid_tag=Registered.rfid_tag AND Registered.rfid_tag='"+rfid_tag+"' AND Race.id="+participant_race+
+            " AND Lap.time_stamp>DATE_ADD(Race.start_time, INTERVAL 30 SECOND) ORDER BY time_stamp ASC")
+            print(participant_race)
+            print(rfid_tag)
+            cursor2.execute(my_query)
+            i=1
+            laps[:] = []
+            lap_nums[:] = []
+            for(time_stamp, num_laps, start_time) in cursor2:
+                print("okay in lap stuff")
+                if i==1:
+                    lap=str(time_stamp-start_time)
+                else:
+                    lap=str(time_stamp-prev_lap)
+                prev_lap=time_stamp
+                print(prev_lap)
+                laps.append(lap)
+                lap_nums.append(i)
+                i+=1
+
+            my_query="SELECT finish_time, place FROM Participant WHERE registration_id="+str(id)+" AND race="+str(race_id)
+            cursor2.execute(my_query)
+            data=cursor2.fetchone()
+            finish_time=data[0]
+            place=data[1]
+
             birthday = birthday.strftime('%m/%d/%Y')
             individual = {"id": id, "name": first_name+" "+last_name, "first_name": first_name, "last_name": last_name, "bib": bib, "rfid_tag": rfid_tag, 
-            "gender": gender, "age": age, "license": license, "phone": phone, "email": email, "birthday": birthday}
+            "gender": gender, "age": age, "license": license, "phone": phone, "email": email, "birthday": birthday, "laps": laps, "lap_nums": lap_nums, 
+            "finish_time": finish_time, "place": place}
 
         print("out of loop")
 
@@ -1447,7 +1528,7 @@ def showAllIndividual(participant_id=None, event_id=None):
         my_query=("SELECT Event.name, Race.* FROM Event, Race, Participant WHERE Event.id=Race.event AND Participant.race=Race.id "+
         "AND Participant.registration_id="+str(participant_id))
         cursor.execute(my_query)
-        for(event_name1, id, name, type, start_time, event, description) in cursor:
+        for(event_name1, id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             event_name=event_name1
             race_stuff = {"id": id, "name": name, "type": type, "start_time": start_time, "event": event, "description": description}
             races.append(race_stuff)
@@ -1740,7 +1821,7 @@ def searchRaces(event_id=None):
             "' THEN 3 ELSE 4 END, name ASC")
         search_results = []
         cursor.execute(my_query)
-        for (id, name, type, start_time, event, description) in cursor:
+        for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             my_query2="SELECT COUNT(*) FROM Participant WHERE race="+str(id)
             cursor2.execute(my_query2)
             participant_count=cursor2.fetchone()[0]
@@ -1792,7 +1873,7 @@ def searchEverything():
             "' THEN 3 ELSE 4 END, name ASC")
         search_results = []
         cursor.execute(my_query)
-        for (id, name, type, start_time, event, description) in cursor:
+        for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
             my_query2="SELECT COUNT(*) FROM Participant WHERE race="+str(id)
             cursor2.execute(my_query2)
             participant_count=cursor2.fetchone()[0]
@@ -1810,6 +1891,136 @@ def searchEverything():
         #return render_template('raceForm.html', error=error, events=events)
     finally:
         cursor.close()
+
+########################################################## TIMING PAGE ################################################################
+
+@app.route('/showTimingSelect') #show all races in dropdown on event select screen for timing an event
+def showTimingSelect():
+    try:
+        conn = mysql.get_db()
+        cursor = conn.cursor()
+
+        my_query = "SELECT * FROM Event ORDER BY date desc"
+        cursor.execute(my_query)
+        events = []
+
+        for (id, event_name, event_city, event_state, event_date, event_description) in cursor:
+            event_info = {"id": id, "name": event_name, "date": event_date, "city": event_city, "state": event_state}
+            events.append(event_info)
+
+        return render_template('timingSelect.html', events=events)
+    except Exception as e:
+        error = 'Could not get events properly'
+        return render_template('timingSelect.html', error=error)
+    finally:
+        cursor.close()
+
+@app.route("/showTiming", methods=['POST', 'GET']) #show the timing page
+def showTiming():
+    try:
+        conn = mysql.get_db()
+        cursor = conn.cursor()
+
+        event_id = request.form['event']
+
+        my_query = "SELECT * FROM Event ORDER BY date desc"
+        cursor.execute(my_query)
+        events = []
+
+        for (id, event_name, event_city, event_state, event_date, event_description) in cursor:
+            event_info = {"id": id, "name": event_name, "date": event_date, "city": event_city, "state": event_state}
+            events.append(event_info)
+
+        if event_id=="None":
+            error='Please select an event, if no events are displayed you may need to create a new event'
+            return render_template('timingSelect.html', error=error, events=events)
+
+        print("hi")
+        my_query="SELECT name FROM Event WHERE id="+event_id
+        cursor.execute(my_query)
+        event_name=cursor.fetchone()[0]
+
+        my_query="SELECT * FROM Race WHERE event="+event_id
+        cursor.execute(my_query)
+        races = []
+
+        print("hi2")
+        for(id, name, type, start_time, end_time, num_laps, event, description) in cursor:
+            if start_time and end_time:
+                total_time = end_time-start_time
+                total_time=str(total_time)
+                #total_time = total_time.total_seconds()/3600
+                #if total_time<1:
+                #    total_time = total_time*60
+                #    time_type="minutes"
+                #else:
+                #    time_type="hours"
+                print(total_time)
+                #total_time = float("{0:.4f}".format(total_time))
+            else:
+                total_time=None
+            if start_time:
+                start_date=start_time.strftime('%m-%d-%Y')
+                start_time=start_time.strftime('%I:%M:%S %p')
+            else:
+                start_date=None
+            if end_time:
+                end_date=end_time.strftime('%m-%d-%Y')
+                end_time=end_time.strftime('%I:%M:%S %p')
+            else:
+                end_date=None
+
+            race_info={"id": id, "name": name, "start_date": start_date, "end_date": end_date, "start_time": start_time, "end_time": end_time, "total_time": total_time}
+            races.append(race_info)
+
+        return render_template('timing.html', event_id=event_id, event_name=event_name, races=races)
+    except Exception as e:
+        error = 'Registration could not be shown!'
+        return json.dumps({'error':str(e)}), 404
+        #return render_template('registerForEventSelect.html', error=error, events=events)
+
+@app.route("/start/<race_id>", methods=['POST']) #show the timing page
+def start(race_id=None):
+    try:
+        conn = mysql.get_db()
+        cursor = conn.cursor()
+
+        print("in start", race_id)
+
+        cur_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        print(cur_time)
+
+        my_query="UPDATE Race SET start_time='"+str(cur_time)+"' WHERE id="+str(race_id)
+        cursor.execute(my_query)
+        conn.commit()
+
+        return render_template('timing.html')
+    except Exception as e:
+        print('error!!!!')
+        error = 'Registration could not be shown!'
+        return json.dumps({'error':str(e)}), 404
+        #return render_template('registerForEventSelect.html', error=error, events=events)
+
+@app.route("/stop/<race_id>", methods=['POST']) #show the timing page
+def stop(race_id=None):
+    try:
+        conn = mysql.get_db()
+        cursor = conn.cursor()
+
+        print("in stop", race_id)
+
+        cur_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        print(cur_time)
+
+        my_query="UPDATE Race SET end_time='"+str(cur_time)+"' WHERE id="+str(race_id)
+        cursor.execute(my_query)
+        conn.commit()
+
+        return render_template("timing.html")
+    except Exception as e:
+        error = 'Registration could not be shown!'
+        return json.dumps({'error':str(e)}), 404
+        #return render_template('registerForEventSelect.html', error=error, events=events)
 
 
 ######################### Functions ##########
@@ -1829,7 +2040,7 @@ def participantForm():
     cursor.execute(my_query)
     races = []
 
-    for (id, name, type, start_time, event, description) in cursor:
+    for (id, name, type, start_time, end_time, num_laps, event, description) in cursor:
         race_info = {"id": id, "name": name}
         races.append(race_info)
 
